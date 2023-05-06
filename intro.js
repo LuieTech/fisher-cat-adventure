@@ -36,10 +36,11 @@ const backgroundImage = {
   
     if (this.speed < 0) {
       ctx.drawImage(this.img, this.x + canvas1.width, 0, scaledWidth, scaledHeight);
-    } else {
-      ctx.drawImage(this.img, this.x - this.img.width, 0, scaledWidth, scaledHeight);
+    } 
+    else {
+    ctx.drawImage(this.img, this.x - this.img.width, 0, scaledWidth, scaledHeight);
     }
-  },
+},
 };
 
 function updateCanvas() {
@@ -67,6 +68,11 @@ class Component {
 
       this.speedY = 0;
       this.speedX = 0
+
+    // Add event listeners for arrow key presses
+    document.addEventListener('keydown', (event) => this.movePlayer(event));
+    document.addEventListener('keyup', (event) => this.stopPlayer(event));
+
     }
 
     update() {
@@ -78,6 +84,42 @@ class Component {
   newPos() {
     this.x += this.speedX;
     this.y += this.speedY;
+  }
+
+  movePlayer(event) {
+    switch (event.key) {
+      // Arrow up
+      case 'ArrowUp':
+          this.speedY = -5;
+        break;
+      // Arrow down
+      case 'ArrowDown':
+        this.speedY = 5;
+        break;
+      // Arrow left
+      case 'ArrowLeft':
+        this.speedX = -5;
+        break;
+      // Arrow right
+      case 'ArrowRight':
+        this.speedX = 5;
+        break;
+    }
+  }
+
+  stopPlayer(event) {
+    switch (event.key) {
+      // Arrow up or down key released
+      case 'ArrowUp':
+      case 'ArrowDown':
+        this.speedY = 0;
+        break;
+      // Arrow left or right key released
+      case 'ArrowLeft':
+      case 'ArrowRight':
+        this.speedX = 0;
+        break;
+    }
   }
 
   left() {
@@ -100,7 +142,4 @@ class Component {
 
 const playerImageSrc = '/images/fisher.png'; 
 const player = new Component(100, 100, playerImageSrc, 50, 270);
-
-
-
 
