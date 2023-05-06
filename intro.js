@@ -53,6 +53,9 @@ function updateCanvas() {
   player.newPos();
   player.update();
 
+  medusas.forEach((medusa) => medusa.update());
+  fishes.forEach((fish) => fish.update());
+
   requestAnimationFrame(updateCanvas);
 }
 
@@ -84,6 +87,8 @@ class Component {
   newPos() {
     this.x += this.speedX;
     this.y += this.speedY;
+
+    this.checkBounds();
   }
 
   movePlayer(event) {
@@ -138,8 +143,144 @@ class Component {
   crashWith(obstacle) {
     return !(this.bottom() < obstacle.top() || this.top() > obstacle.bottom() || this.right() < obstacle.left() || this.left() > obstacle.right());
   }
+
+  checkBounds() {
+    if (this.x < 0) {
+      this.x = 0;
+    }
+    if (this.x + this.width > canvas1.width) {
+      this.x = canvas1.width - this.width;
+    }
+    if (this.y < 0) {
+      this.y = 0;
+    }
+    if (this.y + this.height > canvas1.height) {
+      this.y = canvas1.height - this.height;
+    }
+  }
 }
 
+
+document.addEventListener('keydown', (event) => {
+    switch (event.key) {
+      case 'ArrowUp':
+        player.speedY = -3;
+        break;
+      case 'ArrowDown':
+        player.speedY = 3;
+        break;
+      case 'ArrowLeft':
+        player.speedX = -3;
+        break;
+      case 'ArrowRight':
+        player.speedX = 3;
+        break;
+    }
+  });
+
+  document.addEventListener('keyup', (event) => {
+    switch (event.key) {
+      case 'ArrowUp':
+      case 'ArrowDown':
+        player.speedY = 0;
+        break;
+      case 'ArrowLeft':
+      case 'ArrowRight':
+        player.speedX = 0;
+        break;
+    }
+  });
+
 const playerImageSrc = '/images/fisher.png'; 
-const player = new Component(100, 100, playerImageSrc, 50, 270);
+const player = new Component(80, 80, playerImageSrc, 50, 270);
+
+const medusas = [];
+
+function spawnMedusa() {
+    const medusaImageSrc = "/images/medusa.png";
+    const medusaSpeed = 2; // Set your desired medusa speed
+    const newMedusa = new medusa(medusaImageSrc, medusaSpeed);
+    medusas.push(newMedusa);
+  }
+setInterval(spawnMedusa, 1500)
+
+class medusa {
+    constructor(imageSrc, medusaSpeed) {
+        this.image = new Image();
+        this.image.src = imageSrc;
+        this.speed = medusaSpeed;
+        this.width = 80;
+        this.height = 80;
+        this.x = 1300;
+        this.y = Math.random() * canvas1.height;
+        this.angle = this.angle();
+        this.dx = 1 * this.speed;
+        this.yx = 1 * this.speed;
+        this.radius = 20;
+      }
+      draw() {
+        ctx.save();
+        ctx.translate(this.x, this.y);
+        ctx.rotate(this.angle * Math.PI / 360);
+        ctx.drawImage(this.image, 0, 0, this.width, this.height);
+        ctx.restore();
+      }
+
+      angle() {
+        if (this.y <= 150) return -60;
+        else if (this.y >= 151 && this.y <= 300) return 0;
+        else return 60;
+      }
+
+      move() {
+        if (this.angle === -60) {
+          this.x -= this.dx * 2.5; 
+          this.y += this.dx;
+        } else if (this.angle === 60) {
+          this.x -= this.dx * 2.5; 
+          this.y -= this.dx;
+        } else this.x -= this.dx;
+      }
+
+      update() {
+      this.move();
+      this.draw();
+     }
+}
+
+const fishes = [];
+
+function spawnFish() {
+    const fishSpeed = 1.5; 
+    const newFish = new fish(fishSpeed);
+    fishes.push(newFish);
+  }
+
+  setInterval(spawnFish, 4000); 
+
+  
+class fish extends medusa {
+    constructor(fishSpeed) {
+        super(fishSpeed);
+    
+        this.image = new Image();
+        this.image.src = "./images/fish.png";
+        this.x = Math.random() * canvas1.clientWidth + 900;
+        this.y = Math.random() * canvas1.clientHeight;
+        this.speed = fishSpeed;
+        this.angle = 0;
+        this.dx = 1 * this.speed;
+        this.yx = 1 * this.speed;
+        this.radius = 100;
+        this.width = 40;
+        this.height = 40;
+      }
+
+    update(){
+        this.move();
+        this.draw();
+    }
+}
+
+
 
