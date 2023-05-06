@@ -4,7 +4,7 @@ body {
   }
   
   .game-intro {
-    float: left;
+    float:;
     padding: 0% 10%;
   }
   
@@ -36,11 +36,14 @@ body {
   }
   
   #game-board {
-      float: left;
+      float:;
       padding: 20px 0px;
+      display: flex;
+      width: 100vw;
   }
   
-  #canvas2 {
-    float: left;
+  #canvas1 {
+    float:;
     padding: 0% 5%;
+    width: 90%;
   }
