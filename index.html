@@ -4,28 +4,26 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta http-equiv="X-UA-Compatible" content="ie=edge" />
-    <title>Canvas Basics</title>
 
-    <link rel="stylesheet" href="./styles/style.css" />
-    <link rel="stylesheet" href="./styles/reset.css" />
-
+    <link rel="stylesheet" href="../gameLab/styles/reset.css"/> 
+    <link rel="stylesheet" href="../gameLab/styles/styles.css"/>
+    
+    <title>Fisher Cat Adventure</title>
   </head>
   <body>
-    <!-- the magic happens inside this tag - 
-            it's HTML5 tag that supports animation -->
-    <canvas id="canvas1" width="500" height="500"></canvas>
-    <canvas id="canvas2" width="500" height="500"></canvas>
+    <div class="game-intro">
+      <img src="../gameLab/images/gameLogo.png" alt="" class="logo-img" /> 
+      <br /> <br/>
+      <button id="start-button">Start Fishing</button>
+      <p>Use the UP, DOWN, LEFT and RIGHT arrows to move the cat ^_^</p>
+      <img src="../gameLab/images/arrowKeys.png" alt="" class="arrows-img" />
+    </div>
 
-    <br>
-    <button onclick="draw(0,0)">DRAW</button>
+    <div id="game-board">
+      <canvas id="canvas2" width="800" height="500"></canvas>
+    </div>
 
-    <!-- include js file after DOM is loaded; 
-            if included earlier, you have to use window.onload = function(){ ... } 
-            approach in your intro.js file -->
-    <script src="javascripts/intro.js"></script>
-    <script src="javascripts/secondIntro.js"></script>
-
-    
-
+    <script type="text/javascript" src="../gameLab/JS/intro.js"></script>
   </body>
 </html>
+
