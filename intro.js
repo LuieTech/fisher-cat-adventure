@@ -52,6 +52,8 @@ function updateCanvas() {
   player.newPos();
   player.update();
 
+  medusas.forEach((medusa) => medusa.update());
+
   requestAnimationFrame(updateCanvas);
 }
 
@@ -99,7 +101,71 @@ class Component {
 }
 
 const playerImageSrc = '/images/fisher.png'; 
-const player = new Component(100, 100, playerImageSrc, 50, 270);
+const player = new Component(80, 80, playerImageSrc, 50, 270);
+
+const medusas = [];
+
+function spawnMedusa() {
+    const medusaImageSrc = "/images/medusa.png";
+    const medusaSpeed = 2; // Set your desired medusa speed
+    const newMedusa = new medusa(medusaImageSrc, medusaSpeed);
+    medusas.push(newMedusa);
+  }
+  setInterval(spawnMedusa, 2000)
+
+class medusa {
+    constructor(imageSrc, medusaSpeed) {
+        this.image = new Image();
+        this.image.src = imageSrc;
+        this.speed = medusaSpeed;
+        this.width = 80;
+        this.height = 80;
+        this.x = 1300;
+        this.y = Math.random() * canvas1.height;
+        this.angle = this.angle();
+        this.dx = 1 * this.speed;
+        this.yx = 1 * this.speed;
+        this.radius = 20;
+      }
+      draw() {
+        ctx.save();
+        ctx.translate(this.x, this.y);
+        ctx.rotate(this.angle * Math.PI / 360);
+        ctx.drawImage(this.image, 0, 0, this.width, this.height);
+        ctx.restore();
+      }
+
+      angle() {
+        if (this.y <= 150) return -60;
+        else if (this.y >= 151 && this.y <= 300) return 0;
+        else return 60;
+      }
+
+      move() {
+        if (this.angle === -60) {
+          this.x -= this.dx * 2.5; // Increase the horizontal movement
+          this.y += this.dx;
+        } else if (this.angle === 60) {
+          this.x -= this.dx * 2.5; // Increase the horizontal movement
+          this.y -= this.dx;
+        } else this.x -= this.dx;
+      }
+
+    //   move() {
+    //     if (this.angle === -60) {
+    //       this.x -= this.dx;
+    //       this.y += this.dx;
+    //     } else if (this.angle === 60) {
+    //       this.x -= this.dx;
+    //       this.y -= this.dx;
+    //     } else this.x -= this.dx;
+    //   } 
+
+      update() {
+      this.move();
+      this.draw();
+     }
+}
 
 
 
