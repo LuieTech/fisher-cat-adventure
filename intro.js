@@ -1,15 +1,15 @@
 window.onload = () => {
-    document.getElementById('start-button').onclick = () => {
-      startGame();
-    };
+  document.getElementById('start-button').onclick = () => {
+    startGame();
   };
-  
-  function startGame() {
-    document.getElementById("game-intro").style.display = "none"; // Hide the game intro
-    document.getElementById("game-board").style.display = "block";
-    updateCanvas();
-  }
-  
+};
+
+function startGame() {
+  document.getElementById("game-intro").style.display = "none"; // Hide the game intro
+  document.getElementById("game-board").style.display = "block";
+  updateCanvas();
+}
+
 
 const canvas1 = document.getElementById('canvas1');
 const ctx = canvas1.getContext('2d');
@@ -19,135 +19,217 @@ img.src = '../images/seabed.png';
 console.log(img.src)
 
 const backgroundImage = {
-  img: img,
-  x: 0,
-  speed: -1,
+img: img,
+x: 0,
+speed: -1,
 
-  move: function() {
-    this.x += this.speed;
-    this.x %= canvas1.width;
-  },
+move: function() {
+  this.x += this.speed;
+  this.x %= canvas1.width;
+},
 
-  draw: function() {
-    const scaledWidth = canvas1.width;
-    const scaledHeight = canvas1.height;
-  
-    ctx.drawImage(this.img, this.x, 0, scaledWidth, scaledHeight);
-  
-    if (this.speed < 0) {
-      ctx.drawImage(this.img, this.x + canvas1.width, 0, scaledWidth, scaledHeight);
-    } else {
-      ctx.drawImage(this.img, this.x - this.img.width, 0, scaledWidth, scaledHeight);
-    }
-  },
+draw: function() {
+  const scaledWidth = canvas1.width;
+  const scaledHeight = canvas1.height;
+
+  ctx.drawImage(this.img, this.x, 0, scaledWidth, scaledHeight);
+
+  if (this.speed < 0) {
+    ctx.drawImage(this.img, this.x + canvas1.width, 0, scaledWidth, scaledHeight);
+  } 
+  else {
+  ctx.drawImage(this.img, this.x - this.img.width, 0, scaledWidth, scaledHeight);
+  }
+},
 };
+
+let gameRunning = true; // Flag to track the game state
+let score = 0; // Define the score variable
+let lives = 3; // Add a lives variable and initialize it to 3
 
 function updateCanvas() {
 
-  backgroundImage.move();
+if(!gameRunning) {
+  return;
+}
+else {  
+backgroundImage.move();
 
-  ctx.clearRect(0, 0, canvas1.width, canvas1.height);
-  backgroundImage.draw();
+ctx.clearRect(0, 0, canvas1.width, canvas1.height);
+backgroundImage.draw();
 
-  player.newPos();
-  player.update();
+player.newPos();
+player.update();
 
-  medusas.forEach((medusa) => medusa.update());
-  fishes.forEach((fish) => fish.update());
 
-  requestAnimationFrame(updateCanvas);
+medusas.forEach((medusa, index) => { 
+  let medusaCollided = false;// Add a flag to track if collision occurred
+  medusa.update();
+  if (player.crashWith(medusa)) {
+    medusaCollided = true; // Set the collided flag to true
+    medusas.splice(index,1);
+  }
+
+  if (medusaCollided) {
+    lives--; // Reduce one life when collision occurs
+    if (lives <=0) { 
+      lives = 0; // Set lives to 0 if it goes below 0
+      gameRunning = false; // Set gameRunning to false when collision occurs
+      showGameOver();
+    }
+
+  }
+  
+});
+
+fishes.forEach((fish, index) => {
+  fish.update();
+  if (player.crashWith(fish)) {
+    score += 100;
+    fishes.splice(index, 1); // Remove the collided fish from the array
+    // play a sound here
+    //playSound();
+  }
+});
+
+displayScore(); // Display the score on the canvas
+displayLives(); // Add this line to display the remaining lives
+
+requestAnimationFrame(updateCanvas);
+}
 }
 
 class Component {
-    constructor(width, height, imageSrc, x, y) {
-       
-      this.width = width;
-      this.height = height;
-      this.image = new Image(); 
-      this.image.src = imageSrc;
-      this.x = x;
-      this.y = y;
+  constructor(width, height, imageSrc, x, y) {
+     
+    this.width = width;
+    this.height = height;
+    this.image = new Image(); 
+    this.image.src = imageSrc;
+    this.x = x;
+    this.y = y;
 
+    this.speedY = 0;
+    this.speedX = 0
+
+  // Add event listeners for arrow key presses
+  document.addEventListener('keydown', (event) => this.movePlayer(event));
+  document.addEventListener('keyup', (event) => this.stopPlayer(event));
+
+  }
+
+  update() {
+      const ctx = canvas1.getContext('2d');
+      ctx.drawImage(this.image, this.x, this.y, this.width, this.height);
+    }
+  
+
+newPos() {
+  this.x += this.speedX;
+  this.y += this.speedY;
+
+  this.checkBounds();
+}
+
+movePlayer(event) {
+  switch (event.key) {
+    // Arrow up
+    case 'ArrowUp':
+        this.speedY = -5;
+      break;
+    // Arrow down
+    case 'ArrowDown':
+      this.speedY = 5;
+      break;
+    // Arrow left
+    case 'ArrowLeft':
+      this.speedX = -5;
+      break;
+    // Arrow right
+    case 'ArrowRight':
+      this.speedX = 5;
+      break;
+  }
+}
+
+stopPlayer(event) {
+  switch (event.key) {
+    // Arrow up or down key released
+    case 'ArrowUp':
+    case 'ArrowDown':
       this.speedY = 0;
-      this.speedX = 0
-    }
+      break;
+    // Arrow left or right key released
+    case 'ArrowLeft':
+    case 'ArrowRight':
+      this.speedX = 0;
+      break;
+  }
+}
 
-    update() {
-        const ctx = canvas1.getContext('2d');
-        ctx.drawImage(this.image, this.x, this.y, this.width, this.height);
-      }
-    
+left() {
+  return this.x;
+}
+right() {
+  return this.x + this.width;
+}
+top() {
+  return this.y;
+}
+bottom() {
+  return this.y + this.height;
+}
 
-  newPos() {
-    this.x += this.speedX;
-    this.y += this.speedY;
+crashWith(obstacle) {
+  return !(this.bottom() < obstacle.top() || this.top() > obstacle.bottom() || this.right() < obstacle.left() || this.left() > obstacle.right());
+}
 
-    this.checkBounds();
+checkBounds() {
+  if (this.x < 0) {
+    this.x = 0;
   }
-
-  left() {
-    return this.x;
+  if (this.x + this.width > canvas1.width) {
+    this.x = canvas1.width - this.width;
   }
-  right() {
-    return this.x + this.width;
+  if (this.y < 0) {
+    this.y = 0;
   }
-  top() {
-    return this.y;
+  if (this.y + this.height > canvas1.height) {
+    this.y = canvas1.height - this.height;
   }
-  bottom() {
-    return this.y + this.height;
-  }
- 
-  crashWith(obstacle) {
-    return !(this.bottom() < obstacle.top() || this.top() > obstacle.bottom() || this.right() < obstacle.left() || this.left() > obstacle.right());
-  }
-
-  checkBounds() {
-    if (this.x < 0) {
-      this.x = 0;
-    }
-    if (this.x + this.width > canvas1.width) {
-      this.x = canvas1.width - this.width;
-    }
-    if (this.y < 0) {
-      this.y = 0;
-    }
-    if (this.y + this.height > canvas1.height) {
-      this.y = canvas1.height - this.height;
-    }
-  }
+}
 }
 
 
 document.addEventListener('keydown', (event) => {
-    switch (event.key) {
-      case 'ArrowUp':
-        player.speedY = -3;
-        break;
-      case 'ArrowDown':
-        player.speedY = 3;
-        break;
-      case 'ArrowLeft':
-        player.speedX = -3;
-        break;
-      case 'ArrowRight':
-        player.speedX = 3;
-        break;
-    }
-  });
+  switch (event.key) {
+    case 'ArrowUp':
+      player.speedY = -3;
+      break;
+    case 'ArrowDown':
+      player.speedY = 3;
+      break;
+    case 'ArrowLeft':
+      player.speedX = -3;
+      break;
+    case 'ArrowRight':
+      player.speedX = 3;
+      break;
+  }
+});
 
-  document.addEventListener('keyup', (event) => {
-    switch (event.key) {
-      case 'ArrowUp':
-      case 'ArrowDown':
-        player.speedY = 0;
-        break;
-      case 'ArrowLeft':
-      case 'ArrowRight':
-        player.speedX = 0;
-        break;
-    }
-  });
+document.addEventListener('keyup', (event) => {
+  switch (event.key) {
+    case 'ArrowUp':
+    case 'ArrowDown':
+      player.speedY = 0;
+      break;
+    case 'ArrowLeft':
+    case 'ArrowRight':
+      player.speedX = 0;
+      break;
+  }
+});
 
 const playerImageSrc = '/images/fisher.png'; 
 const player = new Component(80, 80, playerImageSrc, 50, 270);
@@ -155,90 +237,133 @@ const player = new Component(80, 80, playerImageSrc, 50, 270);
 const medusas = [];
 
 function spawnMedusa() {
-    const medusaImageSrc = "/images/medusa.png";
-    const medusaSpeed = 2; // Set your desired medusa speed
-    const newMedusa = new medusa(medusaImageSrc, medusaSpeed);
-    medusas.push(newMedusa);
-  }
+  const medusaImageSrc = "/images/medusa.png";
+  const medusaSpeed = 2; // Set your desired medusa speed
+  const newMedusa = new medusa(medusaImageSrc, medusaSpeed);
+  medusas.push(newMedusa);
+}
 setInterval(spawnMedusa, 1500)
 
 class medusa {
-    constructor(imageSrc, medusaSpeed) {
-        this.image = new Image();
-        this.image.src = imageSrc;
-        this.speed = medusaSpeed;
-        this.width = 80;
-        this.height = 80;
-        this.x = 1300;
-        this.y = Math.random() * canvas1.height;
-        this.angle = this.angle();
-        this.dx = 1 * this.speed;
-        this.yx = 1 * this.speed;
-        this.radius = 20;
-      }
-      draw() {
-        ctx.save();
-        ctx.translate(this.x, this.y);
-        ctx.rotate(this.angle * Math.PI / 360);
-        ctx.drawImage(this.image, 0, 0, this.width, this.height);
-        ctx.restore();
-      }
+  constructor(imageSrc, medusaSpeed) {
+      this.image = new Image();
+      this.image.src = imageSrc;
+      this.speed = medusaSpeed;
+      this.width = 80;
+      this.height = 80;
+      this.x = 1300;
+      this.y = Math.random() * canvas1.height;
+      this.angle = this.angle();
+      this.dx = 1 * this.speed;
+      this.yx = 1 * this.speed;
+      this.radius = 20;
+    }
+    draw() {
+      ctx.save();
+      ctx.translate(this.x, this.y);
+      ctx.rotate(this.angle * Math.PI / 360);
+      ctx.drawImage(this.image, 0, 0, this.width, this.height);
+      ctx.restore();
+    }
 
-      angle() {
-        if (this.y <= 150) return -60;
-        else if (this.y >= 151 && this.y <= 300) return 0;
-        else return 60;
-      }
+    angle() {
+      if (this.y <= 150) return -60;
+      else if (this.y >= 151 && this.y <= 300) return 0;
+      else return 60;
+    }
 
-      move() {
-        if (this.angle === -60) {
-          this.x -= this.dx * 2.5; 
-          this.y += this.dx;
-        } else if (this.angle === 60) {
-          this.x -= this.dx * 2.5; 
-          this.y -= this.dx;
-        } else this.x -= this.dx;
-      }
+    move() {
+      if (this.angle === -60) {
+        this.x -= this.dx * 2.5; 
+        this.y += this.dx;
+      } else if (this.angle === 60) {
+        this.x -= this.dx * 2.5; 
+        this.y -= this.dx;
+      } else this.x -= this.dx;
+    }
 
-      update() {
-      this.move();
-      this.draw();
-     }
+    update() {
+    this.move();
+    this.draw();
+   }
+
+   top() {
+    return this.y;
+  }
+
+  bottom() {
+    return this.y + this.height;
+  }
+
+  left() {
+    return this.x;
+  }
+
+  right() {
+    return this.x + this.width;
+  }
 }
 
 const fishes = [];
 
 function spawnFish() {
-    const fishSpeed = 1.5; 
-    const newFish = new fish(fishSpeed);
-    fishes.push(newFish);
-  }
+  const fishSpeed = 1.5; 
+  const newFish = new fish(fishSpeed);
+  fishes.push(newFish);
+}
 
-  setInterval(spawnFish, 4000); 
+setInterval(spawnFish, 4000); 
 
-  
+
 class fish extends medusa {
-    constructor(fishSpeed) {
-        super(fishSpeed);
-    
-        this.image = new Image();
-        this.image.src = "./images/fish.png";
-        this.x = Math.random() * canvas1.clientWidth + 900;
-        this.y = Math.random() * canvas1.clientHeight;
-        this.speed = fishSpeed;
-        this.angle = 0;
-        this.dx = 1 * this.speed;
-        this.yx = 1 * this.speed;
-        this.radius = 100;
-        this.width = 40;
-        this.height = 40;
-      }
-
-    update(){
-        this.move();
-        this.draw();
+  constructor(fishSpeed) {
+      super(fishSpeed);
+  
+      this.image = new Image();
+      this.image.src = "./images/fish.png";
+      this.x = Math.random() * canvas1.clientWidth + 900;
+      this.y = Math.random() * canvas1.clientHeight;
+      this.speed = fishSpeed;
+      this.angle = 0;
+      this.dx = 1 * this.speed;
+      this.yx = 1 * this.speed;
+      this.radius = 100;
+      this.width = 40;
+      this.height = 40;
     }
+
+  update(){
+      this.move();
+      this.draw();
+  }
+}
+
+function showGameOver() {
+// Stop the game
+cancelAnimationFrame(updateCanvas);
+
+// Clear the canvas
+ctx.clearRect(0, 0, canvas1.width, canvas1.height);
+
+// Draw the background image
+ctx.drawImage(img, 0, 0, canvas1.width, canvas1.height);
+
+// Display game over message
+ctx.font = "40px Cursive";
+ctx.fillStyle = "red";
+ctx.fillText("Game over", canvas1.width / 2 - 100, canvas1.height / 2);
+
 }
 
 
+function displayScore() {
+ctx.font = "20px Arial";
+ctx.fillStyle = "blue";
+ctx.fillText("Score: " + score, 50, 50);
+}
 
+function displayLives() {
+ctx.font = "20px Arial";
+ctx.fillStyle = "red";
+ctx.fillText("Lives: " + lives, 50, 80);
+}
