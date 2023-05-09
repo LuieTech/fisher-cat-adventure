@@ -1,10 +1,22 @@
+
+  @import url('https://fonts.googleapis.com/css2?family=Roboto&display=swap');
+  
+  @import url('https://fonts.googleapis.com/css2?family=Satisfy&display=swap');
+
+  
+  @import url('https://fonts.googleapis.com/css2?family=Crimson+Text:ital@1&family=Satisfy&display=swap');
+
+
+
+
 body {
     padding: 0;
     text-align: center;
   }
   
-  .game-intro {
-   width:40%;
+  .game-intro { 
+  
+   width:50%;
    margin: 0 auto;
    padding: 2%;
    background-image:url(../images/seabed.png);
@@ -13,14 +25,16 @@ body {
   .game-intro p {
     margin-left:26%;
     align-items: center;
-    outline:1px solid blue;
     width:45%;
     padding:20px;
-    font-size: 18px;
-    font-family:cursive;
-    font-weight: bold;
-    color:rgb(136, 48, 218);
-    
+    font-size: 24px;
+    font-family: 'Crimson Text', serif;
+    color: blueviolet;
+  }
+  #instructions{
+    color: blueviolet;
+    font-family: 'Roboto';
+    font: .8em sans-serif;
   }
   
   .logo-img {
@@ -37,20 +51,34 @@ body {
     color: #fff;
     padding: 20px 40px;
     border: 0;
-    box-shadow: 0;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3), 0 6px 20px rgba(0, 0, 0, 0.2);
     border-radius: 20px;
     margin-bottom: 20px;
-    font-family:cursive;
+    font-family: 'Roboto';
+    cursor: pointer;
+    transition: transform 0.2s, box-shadow 0.2s;
+  }
+  body button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.4), 0 8px 24px rgba(0, 0, 0, 0.3);
   }
   
+  
   #game-board {
+      position: relative;
       padding: 20px 0px;
       display: flex;
       width: 100vw;
   }
   
   #canvas1 {
-    float:;
+    position: relative;
+    float: center;
     padding: 0% 5%;
     width: 90%;
+  }
+
+  #reset-button{
+    width: 190px;
+    font-size: 18px;
   }

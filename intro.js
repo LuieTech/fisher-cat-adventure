@@ -3,10 +3,18 @@ window.onload = () => {
     startGame();
   };
 };
+const collisionSound = new Audio('/audio/gameOverSound.mp3');
+collisionSound.volume = 0.5;
+const scoringSound = new Audio('/audio/scoring.mp3')
+const losingLife = new Audio('/audio/losing.pm3');
+const gameAudio = new Audio('/audio/gameMusic.mp3');
+gameAudio.volume = 0.5;
 
 function startGame() {
-  document.getElementById("game-intro").style.display = "none"; // Hide the game intro
+  document.getElementById("game-intro").style.display = "none"; 
   document.getElementById("game-board").style.display = "block";
+  gameAudio.loop = true;
+  gameAudio.play();
   updateCanvas();
 }
 
@@ -43,9 +51,9 @@ draw: function() {
 },
 };
 
-let gameRunning = true; // Flag to track the game state
-let score = 0; // Define the score variable
-let lives = 3; // Add a lives variable and initialize it to 3
+let gameRunning = true; 
+let score = 0; 
+let lives = 3; 
 
 function updateCanvas() {
 
@@ -63,19 +71,21 @@ player.update();
 
 
 medusas.forEach((medusa, index) => { 
-  let medusaCollided = false;// Add a flag to track if collision occurred
+  let medusaCollided = false;
   medusa.update();
   if (player.crashWith(medusa)) {
-    medusaCollided = true; // Set the collided flag to true
+    medusaCollided = true; 
     medusas.splice(index,1);
+    losingLife.play();
   }
 
   if (medusaCollided) {
-    lives--; // Reduce one life when collision occurs
+    lives--; 
     if (lives <=0) { 
-      lives = 0; // Set lives to 0 if it goes below 0
-      gameRunning = false; // Set gameRunning to false when collision occurs
+      lives = 0; 
+      gameRunning = false; 
       showGameOver();
+      collisionSound.play();
     }
 
   }
@@ -86,14 +96,13 @@ fishes.forEach((fish, index) => {
   fish.update();
   if (player.crashWith(fish)) {
     score += 100;
-    fishes.splice(index, 1); // Remove the collided fish from the array
-    // play a sound here
-    //playSound();
+    fishes.splice(index, 1); 
+    scoringSound.play();
   }
 });
 
-displayScore(); // Display the score on the canvas
-displayLives(); // Add this line to display the remaining lives
+displayScore(); 
+displayLives(); 
 
 requestAnimationFrame(updateCanvas);
 }
@@ -112,7 +121,6 @@ class Component {
     this.speedY = 0;
     this.speedX = 0
 
-  // Add event listeners for arrow key presses
   document.addEventListener('keydown', (event) => this.movePlayer(event));
   document.addEventListener('keyup', (event) => this.stopPlayer(event));
 
@@ -133,19 +141,19 @@ newPos() {
 
 movePlayer(event) {
   switch (event.key) {
-    // Arrow up
+   
     case 'ArrowUp':
         this.speedY = -5;
       break;
-    // Arrow down
+   
     case 'ArrowDown':
       this.speedY = 5;
       break;
-    // Arrow left
+   
     case 'ArrowLeft':
       this.speedX = -5;
       break;
-    // Arrow right
+   
     case 'ArrowRight':
       this.speedX = 5;
       break;
@@ -154,12 +162,12 @@ movePlayer(event) {
 
 stopPlayer(event) {
   switch (event.key) {
-    // Arrow up or down key released
+  
     case 'ArrowUp':
     case 'ArrowDown':
       this.speedY = 0;
       break;
-    // Arrow left or right key released
+    
     case 'ArrowLeft':
     case 'ArrowRight':
       this.speedX = 0;
@@ -238,7 +246,7 @@ const medusas = [];
 
 function spawnMedusa() {
   const medusaImageSrc = "/images/medusa.png";
-  const medusaSpeed = 2; // Set your desired medusa speed
+  const medusaSpeed = 2; 
   const newMedusa = new medusa(medusaImageSrc, medusaSpeed);
   medusas.push(newMedusa);
 }
@@ -339,31 +347,61 @@ class fish extends medusa {
 }
 
 function showGameOver() {
-// Stop the game
-cancelAnimationFrame(updateCanvas);
 
-// Clear the canvas
-ctx.clearRect(0, 0, canvas1.width, canvas1.height);
+    cancelAnimationFrame(updateCanvas);
 
-// Draw the background image
-ctx.drawImage(img, 0, 0, canvas1.width, canvas1.height);
+    ctx.clearRect(0, 0, canvas1.width, canvas1.height);
+  
+    ctx.drawImage(img, 0, 0, canvas1.width, canvas1.height);
 
-// Display game over message
-ctx.font = "40px Cursive";
-ctx.fillStyle = "red";
-ctx.fillText("Game over", canvas1.width / 2 - 100, canvas1.height / 2);
+    gameAudio.pause();
+  
+    ctx.font = "50px Cursive";
+    ctx.fillStyle = "red";
+    ctx.textAlign = "center";
+    ctx.fillText("Game over", canvas1.width / 2 - 50, canvas1.height / 2 - 40);
+  
+    ctx.font = "40px Cursive";
+    ctx.fillStyle = "white";
+    ctx.lineWidth = 2;
+    ctx.textAlign = "center";
+    ctx.fillText("You made: " + score + " points !", canvas1.width / 2 - 50, canvas1.height / 2 + 40);
 
+    const resetButton = document.createElement('button');
+    resetButton.id = 'reset-button';
+    resetButton.innerHTML = 'Restart Game';
+    resetButton.onclick = resetGame;
+    document.getElementById('game-board').appendChild(resetButton);
 }
-
 
 function displayScore() {
 ctx.font = "20px Arial";
 ctx.fillStyle = "blue";
-ctx.fillText("Score: " + score, 50, 50);
+ctx.fillText("Score: " + score, canvas1.width -150, 50);
 }
 
 function displayLives() {
 ctx.font = "20px Arial";
 ctx.fillStyle = "red";
-ctx.fillText("Lives: " + lives, 50, 80);
+ctx.fillText("Lives: " + lives, canvas1.width -150, 80);
+}
+
+function resetGame(){
+    gameRunning = true;
+    score = 0;
+    lives = 3;
+    player.x = 50;
+    player.y = 270;
+    medusas.length = 0;
+    fishes.length = 0;
+    gameAudio.play();
+
+    const resetButton = document.getElementById('reset-button');
+    if(resetButton){
+        resetButton.style.display = 'none';
+    }
+
+    document.getElementById('game-board').style.display = 'block'
+
+    startGame();
 }
