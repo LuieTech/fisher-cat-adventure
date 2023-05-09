@@ -3,12 +3,12 @@ window.onload = () => {
     startGame();
   };
 };
-const collisionSound = new Audio('/audio/gameOverSound.mp3');
-collisionSound.volume = 0.5;
+const gameOver = new Audio('/audio/gameOverSound.mp3');
+gameOver.volume = 0.4;
 const scoringSound = new Audio('/audio/scoring.mp3')
 const losingLife = new Audio('/audio/losing.pm3');
 const gameAudio = new Audio('/audio/gameMusic.mp3');
-gameAudio.volume = 0.5;
+gameAudio.volume = 0.2;
 
 function startGame() {
   document.getElementById("game-intro").style.display = "none"; 
@@ -85,7 +85,7 @@ medusas.forEach((medusa, index) => {
       lives = 0; 
       gameRunning = false; 
       showGameOver();
-      collisionSound.play();
+      gameOver.play();
     }
 
   }
