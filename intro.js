@@ -7,6 +7,7 @@ const gameOver = new Audio('/audio/gameOverSound.mp3');
 gameOver.volume = 0.4;
 const scoringSound = new Audio('/audio/scoring.mp3')
 const losingLife = new Audio('/audio/losing.mp3');
+losingLife.volume = 0.8;
 const gameAudio = new Audio('/audio/gameMusic.mp3');
 gameAudio.volume = 0.2;
 
