@@ -105,7 +105,12 @@ fishes.forEach((fish, index) => {
 displayScore(); 
 displayLives(); 
 
-requestAnimationFrame(updateCanvas);
+if (!gameRunning) {
+  return;
+} else {
+  // existing game logic...
+  requestAnimationFrame(updateCanvas);
+}
 }
 }
 
@@ -210,35 +215,35 @@ checkBounds() {
 }
 
 
-document.addEventListener('keydown', (event) => {
-  switch (event.key) {
-    case 'ArrowUp':
-      player.speedY = -3;
-      break;
-    case 'ArrowDown':
-      player.speedY = 3;
-      break;
-    case 'ArrowLeft':
-      player.speedX = -3;
-      break;
-    case 'ArrowRight':
-      player.speedX = 3;
-      break;
-  }
-});
+// document.addEventListener('keydown', (event) => {
+//   switch (event.key) {
+//     case 'ArrowUp':
+//       player.speedY = -3;
+//       break;
+//     case 'ArrowDown':
+//       player.speedY = 3;
+//       break;
+//     case 'ArrowLeft':
+//       player.speedX = -3;
+//       break;
+//     case 'ArrowRight':
+//       player.speedX = 3;
+//       break;
+//   }
+// });
 
-document.addEventListener('keyup', (event) => {
-  switch (event.key) {
-    case 'ArrowUp':
-    case 'ArrowDown':
-      player.speedY = 0;
-      break;
-    case 'ArrowLeft':
-    case 'ArrowRight':
-      player.speedX = 0;
-      break;
-  }
-});
+// document.addEventListener('keyup', (event) => {
+//   switch (event.key) {
+//     case 'ArrowUp':
+//     case 'ArrowDown':
+//       player.speedY = 0;
+//       break;
+//     case 'ArrowLeft':
+//     case 'ArrowRight':
+//       player.speedX = 0;
+//       break;
+//   }
+// });
 
 const playerImageSrc = '/images/fisher.png'; 
 const player = new Component(80, 80, playerImageSrc, 50, 270);
