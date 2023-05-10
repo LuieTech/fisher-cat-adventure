@@ -14,6 +14,7 @@ body {
   .game-intro { 
   
    width:50%;
+   height: ;
    margin: 0 auto;
    padding: 2%;
    background-image:url(../images/seabed.png);
@@ -23,7 +24,7 @@ body {
     margin-left:26%;
     align-items: center;
     width:45%;
-    padding:20px;
+    padding:10px;
     font-size: 24px;
     font-family: 'Crimson Text', serif;
     color: blueviolet;
@@ -36,10 +37,12 @@ body {
   
   .logo-img {
     width: 350px;
+    padding-top: 20px;
   }
   
   .arrows-img {
     width: 150px;
+    padding-bottom: 15%;
   }
   
   body button {
@@ -50,6 +53,7 @@ body {
     border: 0;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3), 0 6px 20px rgba(0, 0, 0, 0.2);
     border-radius: 20px;
+    margin-top: 35px;;
     margin-bottom: 20px;
     font-family: 'Roboto';
     cursor: pointer;
