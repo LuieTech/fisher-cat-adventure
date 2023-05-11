@@ -212,13 +212,13 @@ checkBounds() {
 }
 }
 
-const playerImageSrc = '/images/fisher.png'; 
+const playerImageSrc = "./images/fisher.png"; 
 const player = new Component(120, 80, playerImageSrc, 50, 270);
 
 const medusas = [];
 
 function spawnMedusa() {
-  const medusaImageSrc = "/images/medusa.png";
+  const medusaImageSrc = "./images/medusa.png";
   const medusaSpeed = 2; 
   const newMedusa = new medusa(medusaImageSrc, medusaSpeed);
   medusas.push(newMedusa);
