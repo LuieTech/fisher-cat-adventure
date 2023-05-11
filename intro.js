@@ -422,7 +422,5 @@ function resetGame() {
     restartButton.parentNode.removeChild(restartButton);
   }
 
-  setTimeout(() => {
-    startGame();
-  },100);
+  requestAnimationFrame(startGame);
 }
