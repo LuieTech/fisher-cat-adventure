@@ -3,12 +3,13 @@ window.onload = () => {
     startGame();
   };
 };
-const collisionSound = new Audio('/audio/gameOverSound.mp3');
-collisionSound.volume = 0.5;
-const scoringSound = new Audio('/audio/scoring.mp3')
-const losingLife = new Audio('/audio/losing.pm3');
-const gameAudio = new Audio('/audio/gameMusic.mp3');
-gameAudio.volume = 0.5;
+const gameOver = new Audio('./audio/gameOverSound.mp3');
+gameOver.volume = 0.4;
+const scoringSound = new Audio('./audio/scoring.mp3')
+const losingLife = new Audio('./audio/losing.mp3');
+losingLife.volume = 0.8;
+const gameAudio = new Audio('./audio/gameMusic.mp3');
+gameAudio.volume = 0.2;
 
 function startGame() {
   document.getElementById("game-intro").style.display = "none"; 
@@ -23,13 +24,11 @@ function startGame() {
   }
 }
 
-
 const canvas1 = document.getElementById('canvas1');
 const ctx = canvas1.getContext('2d');
-console.log(canvas1)
 const img = new Image();
-img.src = '../images/seabed.png';
-console.log(img.src)
+img.src = './images/seabed.png';
+
 
 const backgroundImage = {
 img: img,
@@ -90,7 +89,7 @@ medusas.forEach((medusa, index) => {
       lives = 0; 
       gameRunning = false; 
       showGameOver();
-      collisionSound.play();
+      gameOver.play();
     }
 
   }
@@ -109,7 +108,12 @@ fishes.forEach((fish, index) => {
 displayScore(); 
 displayLives(); 
 
-requestAnimationFrame(updateCanvas);
+if (!gameRunning) {
+  return;
+} else {
+ 
+  requestAnimationFrame(updateCanvas);
+}
 }
 }
 
@@ -245,18 +249,17 @@ document.addEventListener('keyup', (event) => {
 });
 
 const playerImageSrc = '/images/fisher.png'; 
-const player = new Component(110, 80, playerImageSrc, 50, 270);
+const player = new Component(80, 80, playerImageSrc, 50, 270);
 
 const medusas = [];
 
 function spawnMedusa() {
   const medusaImageSrc = "/images/medusa.png";
-  const medusaSpeed = 2;
-    const newMedusa = new medusa(medusaImageSrc, medusaSpeed);
-    medusas.push(newMedusa);
-  }
-
-setInterval(spawnMedusa, 2000)
+  const medusaSpeed = 2; 
+  const newMedusa = new medusa(medusaImageSrc, medusaSpeed);
+  medusas.push(newMedusa);
+}
+setInterval(spawnMedusa, 1500)
 
 class medusa {
   constructor(imageSrc, medusaSpeed) {
