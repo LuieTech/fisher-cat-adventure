@@ -249,7 +249,7 @@ document.addEventListener('keyup', (event) => {
 });
 
 const playerImageSrc = '/images/fisher.png'; 
-const player = new Component(80, 80, playerImageSrc, 50, 270);
+const player = new Component(120, 80, playerImageSrc, 50, 270);
 
 const medusas = [];
 
