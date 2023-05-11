@@ -16,6 +16,11 @@ function startGame() {
   gameAudio.loop = true;
   gameAudio.play();
   updateCanvas();
+
+  const restartButton = document.getElementById('restart-button');
+  if(restartButton){
+    restartButton.style.display = 'none';
+  }
 }
 
 
@@ -240,25 +245,26 @@ document.addEventListener('keyup', (event) => {
 });
 
 const playerImageSrc = '/images/fisher.png'; 
-const player = new Component(80, 80, playerImageSrc, 50, 270);
+const player = new Component(110, 80, playerImageSrc, 50, 270);
 
 const medusas = [];
 
 function spawnMedusa() {
   const medusaImageSrc = "/images/medusa.png";
-  const medusaSpeed = 2; 
-  const newMedusa = new medusa(medusaImageSrc, medusaSpeed);
-  medusas.push(newMedusa);
-}
-setInterval(spawnMedusa, 1500)
+  const medusaSpeed = 2;
+    const newMedusa = new medusa(medusaImageSrc, medusaSpeed);
+    medusas.push(newMedusa);
+  }
+
+setInterval(spawnMedusa, 2000)
 
 class medusa {
   constructor(imageSrc, medusaSpeed) {
       this.image = new Image();
       this.image.src = imageSrc;
       this.speed = medusaSpeed;
-      this.width = 80;
-      this.height = 80;
+      this.width = 50;
+      this.height = 50;
       this.x = 1300;
       this.y = Math.random() * canvas1.height;
       this.angle = this.angle();
@@ -320,7 +326,7 @@ function spawnFish() {
   fishes.push(newFish);
 }
 
-setInterval(spawnFish, 4000); 
+setInterval(spawnFish, 3000); 
 
 
 class fish extends medusa {
@@ -336,8 +342,8 @@ class fish extends medusa {
       this.dx = 1 * this.speed;
       this.yx = 1 * this.speed;
       this.radius = 100;
-      this.width = 40;
-      this.height = 40;
+      this.width = 45;
+      this.height = 45;
     }
 
   update(){
@@ -367,12 +373,20 @@ function showGameOver() {
     ctx.textAlign = "center";
     ctx.fillText("You made: " + score + " points !", canvas1.width / 2 - 50, canvas1.height / 2 + 40);
 
-    const resetButton = document.createElement('button');
-    resetButton.id = 'reset-button';
-    resetButton.innerHTML = 'Restart Game';
-    resetButton.onclick = resetGame;
-    document.getElementById('game-board').appendChild(resetButton);
-}
+    const restartButton = document.getElementById('restart-button');
+    if(restartButton){
+      restartButton.style.display = 'block';
+    }
+    else {
+      const restartButton = document.createElement('button');
+      restartButton.id = "restart-button";
+      restartButton.innerHTML = 'Restart Game';
+      restartButton.onclick = resetGame;
+      document.getElementById('game-board').appendChild(restartButton);
+    }
+
+   }
+
 
 function displayScore() {
 ctx.font = "20px Arial";
@@ -386,22 +400,26 @@ ctx.fillStyle = "red";
 ctx.fillText("Lives: " + lives, canvas1.width -150, 80);
 }
 
-function resetGame(){
-    gameRunning = true;
-    score = 0;
-    lives = 3;
-    player.x = 50;
-    player.y = 270;
-    medusas.length = 0;
-    fishes.length = 0;
-    gameAudio.play();
+function resetGame() {
+  gameRunning = true;
+  score = 0;
+  lives = 3;
+  player.x = 50;
+  player.y = 270;
+  medusas.length = 0;
+  fishes.length = 0;
+  gameAudio.play();
 
-    const resetButton = document.getElementById('reset-button');
-    if(resetButton){
-        resetButton.style.display = 'none';
-    }
+  document.getElementById('game-intro').style.display = 'none';
+  document.getElementById('game-board').style.display = 'block';
 
-    document.getElementById('game-board').style.display = 'block'
+  const restartButton = document.getElementById('restart-button');
+  if (restartButton) {
+    restartButton.removeEventListener('click', resetGame);
+    restartButton.parentNode.removeChild(restartButton);
+  }
 
+  setTimeout(() => {
     startGame();
+  },100);
 }
