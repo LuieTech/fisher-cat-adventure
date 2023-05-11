@@ -17,11 +17,6 @@ function startGame() {
   gameAudio.loop = true;
   gameAudio.play();
   updateCanvas();
-
-  const restartButton = document.getElementById('restart-button');
-  if(restartButton){
-    restartButton.style.display = 'none';
-  }
 }
 
 const canvas1 = document.getElementById('canvas1');
@@ -216,37 +211,6 @@ checkBounds() {
   }
 }
 }
-
-
-document.addEventListener('keydown', (event) => {
-  switch (event.key) {
-    case 'ArrowUp':
-      player.speedY = -3;
-      break;
-    case 'ArrowDown':
-      player.speedY = 3;
-      break;
-    case 'ArrowLeft':
-      player.speedX = -3;
-      break;
-    case 'ArrowRight':
-      player.speedX = 3;
-      break;
-  }
-});
-
-document.addEventListener('keyup', (event) => {
-  switch (event.key) {
-    case 'ArrowUp':
-    case 'ArrowDown':
-      player.speedY = 0;
-      break;
-    case 'ArrowLeft':
-    case 'ArrowRight':
-      player.speedX = 0;
-      break;
-  }
-});
 
 const playerImageSrc = '/images/fisher.png'; 
 const player = new Component(120, 80, playerImageSrc, 50, 270);
