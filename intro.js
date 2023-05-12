@@ -302,7 +302,7 @@ class fish extends medusa {
   
       this.image = new Image();
       this.image.src = "./images/fish.png";
-      this.x = Math.random() * canvas1.clientWidth + 900;
+      this.x = Math.random() * canvas1.width + canvas1.width;
       this.y = Math.random() * canvas1.clientHeight;
       this.speed = fishSpeed;
       this.angle = 0;
